@@ -6,12 +6,15 @@ namespace JOOservices\XFlickrCrawler\Tests\Unit;
 
 use JOOservices\Flickr\DTO\Common\ApiResponseData;
 use JOOservices\Flickr\DTO\Common\PaginationData;
+use JOOservices\XFlickrCrawler\Enums\CrawlRunStatus;
 use JOOservices\XFlickrCrawler\Enums\TaskType;
+use JOOservices\XFlickrCrawler\Fetchers\FavoritesFetcher;
 use JOOservices\XFlickrCrawler\Fetchers\GalleriesListFetcher;
 use JOOservices\XFlickrCrawler\Fetchers\GalleriesPhotosFetcher;
 use JOOservices\XFlickrCrawler\Fetchers\PeoplePhotosFetcher;
 use JOOservices\XFlickrCrawler\Fetchers\PhotosetsListFetcher;
 use JOOservices\XFlickrCrawler\Fetchers\PhotosetsPhotosFetcher;
+use JOOservices\XFlickrCrawler\Models\CrawlRun;
 use JOOservices\XFlickrCrawler\Models\CrawlTarget;
 use JOOservices\XFlickrCrawler\Tests\TestCase;
 
@@ -118,6 +121,38 @@ final class FetchersTest extends TestCase
         $result = app(PeoplePhotosFetcher::class)->fetchPage($target, $response);
 
         $this->assertSame(1, $result->resultCount);
+        $this->assertSame(2, $result->followUpSpecs[0]->page);
+    }
+
+    public function test_favorites_fetcher_paginates(): void
+    {
+        $run = CrawlRun::query()->create([
+            'connection_key' => 'fetcher-conn',
+            'crawl_type' => 'favorites',
+            'subject_nsid' => '444@N01',
+            'status' => CrawlRunStatus::Running,
+            'started_at' => now(),
+        ]);
+
+        $target = new CrawlTarget([
+            'xflickr_crawl_run_id' => $run->id,
+            'task_type' => TaskType::FavoritesPage,
+            'subject_nsid' => '444@N01',
+            'page' => 1,
+        ]);
+        $target->setRelation('crawlRun', $run);
+
+        $response = new ApiResponseData(
+            ok: true,
+            data: ['photos' => ['photo' => [['id' => 'fp-1', 'owner' => 'owner@N01']]]],
+            pagination: new PaginationData(page: 1, pages: 2, perPage: 500, total: 2),
+        );
+
+        $result = app(FavoritesFetcher::class)->fetchPage($target, $response);
+
+        $this->assertSame(1, $result->resultCount);
+        $this->assertCount(1, $result->followUpSpecs);
+        $this->assertSame(TaskType::FavoritesPage, $result->followUpSpecs[0]->taskType);
         $this->assertSame(2, $result->followUpSpecs[0]->page);
     }
 }

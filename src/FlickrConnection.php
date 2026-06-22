@@ -36,6 +36,11 @@ final class FlickrConnection
         return $this->crawling->startGalleries($this->connectionKey, $this->tokenPayload, $nsid, $this->appProfile);
     }
 
+    public function favorites(string $nsid): CrawlRun
+    {
+        return $this->crawling->startFavorites($this->connectionKey, $this->tokenPayload, $nsid, $this->appProfile);
+    }
+
     public function connectionKey(): string
     {
         return $this->connectionKey;

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace JOOservices\XFlickrCrawler\Services;
 
 use Illuminate\Support\Facades\DB;
+use JOOservices\XFlickrCrawler\Repositories\ConnectionContactRepository;
 use JOOservices\XFlickrCrawler\Repositories\ContactRepository;
 use JOOservices\XFlickrCrawler\Repositories\GalleryRepository;
 use JOOservices\XFlickrCrawler\Repositories\PhotoRepository;
@@ -15,6 +16,7 @@ final class FlickrCatalogService
 {
     public function __construct(
         private readonly ContactRepository $contacts,
+        private readonly ConnectionContactRepository $connectionContacts,
         private readonly PhotoRepository $photos,
         private readonly PhotosetRepository $photosets,
         private readonly GalleryRepository $galleries,
@@ -24,7 +26,7 @@ final class FlickrCatalogService
     /**
      * @param  list<array<string, mixed>>  $contactItems
      */
-    public function persistContacts(array $contactItems): int
+    public function persistContacts(array $contactItems, ?string $connectionKey = null): int
     {
         $rows = [];
         foreach ($contactItems as $contact) {
@@ -34,7 +36,20 @@ final class FlickrCatalogService
             }
         }
 
-        return $this->contacts->upsertMany($rows);
+        if ($rows === []) {
+            return 0;
+        }
+
+        $count = $this->contacts->upsertMany($rows);
+
+        if ($connectionKey !== null && $connectionKey !== '') {
+            $this->connectionContacts->upsertMany(
+                $connectionKey,
+                array_column($rows, 'nsid'),
+            );
+        }
+
+        return $count;
     }
 
     /**

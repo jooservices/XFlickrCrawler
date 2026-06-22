@@ -66,6 +66,18 @@ final class CrawlingService
         return $run;
     }
 
+    public function startFavorites(string $connectionKey, string $tokenPayload, string $nsid, ?string $appProfile = null): CrawlRun
+    {
+        $this->ensureConnection($connectionKey, $tokenPayload, $appProfile);
+        $this->guardGlobalPause();
+
+        $run = $this->spider->createRun($connectionKey, CrawlType::Favorites, $nsid);
+        $this->spider->enqueueTarget($run, TaskType::FavoritesPage, $nsid, null, 1);
+        $this->spider->dispatchDueTargets();
+
+        return $run;
+    }
+
     /**
      * @return list<CrawlTaskSpec>
      */

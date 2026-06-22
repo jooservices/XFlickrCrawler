@@ -9,6 +9,7 @@ use JOOservices\XFlickrCrawler\DTO\FetcherFetchResult;
 use JOOservices\XFlickrCrawler\DTO\FlickrPermit;
 use JOOservices\XFlickrCrawler\Enums\ApiOutcome;
 use JOOservices\XFlickrCrawler\Enums\CrawlStatus;
+use JOOservices\XFlickrCrawler\Events\CrawlPageFailed;
 use JOOservices\XFlickrCrawler\Models\CrawlRun;
 use JOOservices\XFlickrCrawler\Models\CrawlTarget;
 use JOOservices\XFlickrCrawler\Services\FlickrApiAuditService;
@@ -145,5 +146,7 @@ trait InteractsWithXFlickrCrawlJob
             'locked_until' => null,
             'last_crawled_at' => now(),
         ]);
+
+        event(new CrawlPageFailed($target->fresh(['crawlRun']) ?? $target, $reason));
     }
 }

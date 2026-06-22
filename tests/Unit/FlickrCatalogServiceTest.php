@@ -9,6 +9,7 @@ use JOOservices\XFlickrCrawler\Models\Gallery;
 use JOOservices\XFlickrCrawler\Models\Photo;
 use JOOservices\XFlickrCrawler\Models\Photoset;
 use JOOservices\XFlickrCrawler\Services\FlickrCatalogService;
+use JOOservices\XFlickrCrawler\Services\FlickrFavoritesPersistence;
 use JOOservices\XFlickrCrawler\Tests\TestCase;
 
 final class FlickrCatalogServiceTest extends TestCase
@@ -148,5 +149,39 @@ final class FlickrCatalogServiceTest extends TestCase
         $this->assertNotNull($contact);
         $this->assertNull($contact->username);
         $this->assertSame('Name', $contact->realname);
+    }
+
+    public function test_persist_contacts_records_connection_contacts(): void
+    {
+        $this->catalog->persistContacts([
+            ['nsid' => '888@N01', 'username' => 'zoe'],
+        ], 'conn-888');
+
+        $this->assertDatabaseHas('xflickr_connection_contacts', [
+            'connection_key' => 'conn-888',
+            'contact_nsid' => '888@N01',
+        ]);
+    }
+
+    public function test_persist_favorites_page_upserts_photos_and_favorites(): void
+    {
+        $count = app(FlickrFavoritesPersistence::class)->persistPage([
+            [
+                'id' => 'fav-photo-1',
+                'owner' => 'owner@N01',
+                'title' => 'Fav',
+                'secret' => 's',
+                'server' => '1',
+                'farm' => 1,
+            ],
+        ], 'conn-fav', 'subject@N01');
+
+        $this->assertSame(1, $count);
+        $this->assertDatabaseHas('xflickr_photos', ['flickr_photo_id' => 'fav-photo-1']);
+        $this->assertDatabaseHas('xflickr_favorites', [
+            'connection_key' => 'conn-fav',
+            'subject_nsid' => 'subject@N01',
+            'photo_owner_nsid' => 'owner@N01',
+        ]);
     }
 }

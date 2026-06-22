@@ -10,4 +10,5 @@ enum CrawlType: string
     case Photos = 'photos';
     case Photosets = 'photosets';
     case Galleries = 'galleries';
+    case Favorites = 'favorites';
 }

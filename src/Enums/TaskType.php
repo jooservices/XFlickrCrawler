@@ -12,4 +12,5 @@ enum TaskType: string
     case PhotosetsPhotos = 'photosets_photos';
     case GalleriesList = 'galleries_list';
     case GalleriesPhotos = 'galleries_photos';
+    case FavoritesPage = 'favorites_page';
 }

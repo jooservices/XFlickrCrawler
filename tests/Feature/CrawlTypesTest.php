@@ -7,6 +7,7 @@ namespace JOOservices\XFlickrCrawler\Tests\Feature;
 use Illuminate\Support\Facades\Queue;
 use JOOservices\XFlickrCrawler\Enums\TaskType;
 use JOOservices\XFlickrCrawler\Facades\FlickrService;
+use JOOservices\XFlickrCrawler\Jobs\FetchFavoritesPageJob;
 use JOOservices\XFlickrCrawler\Jobs\FetchGalleriesListJob;
 use JOOservices\XFlickrCrawler\Jobs\FetchPeoplePhotosJob;
 use JOOservices\XFlickrCrawler\Jobs\FetchPhotosetsListJob;
@@ -56,6 +57,21 @@ final class CrawlTypesTest extends TestCase
         ]);
 
         Queue::assertPushed(FetchGalleriesListJob::class);
+    }
+
+    public function test_favorites_starts_favorites_page_target(): void
+    {
+        Queue::fake();
+
+        $run = FlickrService::connection('acct-fav', $this->sampleToken())->favorites('555@N01');
+
+        $this->assertDatabaseHas('xflickr_crawl_targets', [
+            'xflickr_crawl_run_id' => $run->id,
+            'task_type' => TaskType::FavoritesPage->value,
+            'subject_nsid' => '555@N01',
+        ]);
+
+        Queue::assertPushed(FetchFavoritesPageJob::class);
     }
 
     public function test_global_pause_blocks_crawl_start(): void

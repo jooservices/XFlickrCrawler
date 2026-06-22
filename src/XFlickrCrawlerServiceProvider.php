@@ -6,19 +6,19 @@ namespace JOOservices\XFlickrCrawler;
 
 use Illuminate\Support\ServiceProvider;
 use JOOservices\XFlickrCrawler\Console\DispatchCrawlTargetsCommand;
-use JOOservices\XFlickrCrawler\Repositories\ContactRepository;
-use JOOservices\XFlickrCrawler\Repositories\GalleryRepository;
-use JOOservices\XFlickrCrawler\Repositories\PhotoRepository;
-use JOOservices\XFlickrCrawler\Repositories\PhotosetRepository;
-use JOOservices\XFlickrCrawler\Repositories\PivotRepository;
+use JOOservices\XFlickrCrawler\Jobs\CrawlTargetJobFactory;
+use JOOservices\XFlickrCrawler\Services\CrawlerCatalog;
+use JOOservices\XFlickrCrawler\Services\CrawlerRuns;
 use JOOservices\XFlickrCrawler\Services\CrawlingService;
 use JOOservices\XFlickrCrawler\Services\FlickrApiAuditService;
 use JOOservices\XFlickrCrawler\Services\FlickrApiOutcomeClassifier;
 use JOOservices\XFlickrCrawler\Services\FlickrCatalogService;
 use JOOservices\XFlickrCrawler\Services\FlickrClientFactory;
+use JOOservices\XFlickrCrawler\Services\FlickrFavoritesPersistence;
 use JOOservices\XFlickrCrawler\Services\FlickrPermitAcquirer;
 use JOOservices\XFlickrCrawler\Services\FlickrRequestLimiter;
 use JOOservices\XFlickrCrawler\Services\FlickrSpiderService;
+use JOOservices\XFlickrCrawler\Support\RepositoryRegistrar;
 
 final class XFlickrCrawlerServiceProvider extends ServiceProvider
 {
@@ -33,13 +33,13 @@ final class XFlickrCrawlerServiceProvider extends ServiceProvider
         $this->app->singleton(FlickrApiAuditService::class);
         $this->app->singleton(FlickrClientFactory::class);
         $this->app->singleton(FlickrSpiderService::class);
+        $this->app->singleton(CrawlTargetJobFactory::class);
         $this->app->singleton(CrawlingService::class);
+        $this->app->singleton(CrawlerCatalog::class);
+        $this->app->singleton(CrawlerRuns::class);
         $this->app->singleton(FlickrCatalogService::class);
-        $this->app->singleton(ContactRepository::class);
-        $this->app->singleton(PhotoRepository::class);
-        $this->app->singleton(PhotosetRepository::class);
-        $this->app->singleton(GalleryRepository::class);
-        $this->app->singleton(PivotRepository::class);
+        $this->app->singleton(FlickrFavoritesPersistence::class);
+        RepositoryRegistrar::register($this->app);
     }
 
     public function boot(): void

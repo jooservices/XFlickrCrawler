@@ -9,27 +9,32 @@ use JOOservices\XFlickrCrawler\DTO\CrawlTaskSpec;
 use JOOservices\XFlickrCrawler\DTO\FetcherFetchResult;
 use JOOservices\XFlickrCrawler\Enums\TaskType;
 use JOOservices\XFlickrCrawler\Models\CrawlTarget;
-use JOOservices\XFlickrCrawler\Services\FlickrCatalogService;
+use JOOservices\XFlickrCrawler\Services\FlickrFavoritesPersistence;
 use JOOservices\XFlickrCrawler\Support\FlickrResponseHelper;
 use JOOservices\XFlickrCrawler\Support\XFlickrConfig;
 
-final class ContactsFetcher
+final class FavoritesFetcher
 {
     public function __construct(
-        private readonly FlickrCatalogService $catalog,
+        private readonly FlickrFavoritesPersistence $favorites,
     ) {}
 
     public function fetchPage(CrawlTarget $target, ApiResponseData $response): FetcherFetchResult
     {
-        $contacts = FlickrResponseHelper::listItems($response->data, 'contacts', 'contact');
-        $connectionKey = $target->crawlRun?->connection_key;
-        $count = $this->catalog->persistContacts($contacts, $connectionKey);
+        $photos = FlickrResponseHelper::listItems($response->data, 'photos', 'photo');
+        $subjectNsid = (string) $target->subject_nsid;
+        $connectionKey = (string) $target->crawlRun->connection_key;
+
+        $count = $connectionKey !== ''
+            ? $this->favorites->persistPage($photos, $connectionKey, $subjectNsid)
+            : 0;
 
         $followUp = [];
         $pagination = $response->pagination;
         if ($pagination !== null && $pagination->page < $pagination->pages) {
             $followUp[] = new CrawlTaskSpec(
-                taskType: TaskType::ContactsPage,
+                taskType: TaskType::FavoritesPage,
+                subjectNsid: $subjectNsid,
                 page: $pagination->page + 1,
             );
         }

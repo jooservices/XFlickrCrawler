@@ -18,6 +18,8 @@ return [
         'crawl_runs' => 'xflickr_crawl_runs',
         'crawl_targets' => 'xflickr_crawl_targets',
         'api_logs' => 'xflickr_api_logs',
+        'favorites' => 'xflickr_favorites',
+        'connection_contacts' => 'xflickr_connection_contacts',
     ],
 
     'throttle' => [

@@ -11,12 +11,8 @@ use JOOservices\XFlickrCrawler\Enums\CrawlRunStatus;
 use JOOservices\XFlickrCrawler\Enums\CrawlStatus;
 use JOOservices\XFlickrCrawler\Enums\CrawlType;
 use JOOservices\XFlickrCrawler\Enums\TaskType;
-use JOOservices\XFlickrCrawler\Jobs\FetchContactsPageJob;
-use JOOservices\XFlickrCrawler\Jobs\FetchGalleriesListJob;
-use JOOservices\XFlickrCrawler\Jobs\FetchGalleriesPhotosJob;
-use JOOservices\XFlickrCrawler\Jobs\FetchPeoplePhotosJob;
-use JOOservices\XFlickrCrawler\Jobs\FetchPhotosetsListJob;
-use JOOservices\XFlickrCrawler\Jobs\FetchPhotosetsPhotosJob;
+use JOOservices\XFlickrCrawler\Events\CrawlRunCompleted;
+use JOOservices\XFlickrCrawler\Jobs\CrawlTargetJobFactory;
 use JOOservices\XFlickrCrawler\Models\Connection;
 use JOOservices\XFlickrCrawler\Models\Contact;
 use JOOservices\XFlickrCrawler\Models\CrawlRun;
@@ -27,6 +23,10 @@ use JOOservices\XFlickrCrawler\Support\XFlickrConfig;
 
 final class FlickrSpiderService
 {
+    public function __construct(
+        private readonly CrawlTargetJobFactory $jobFactory,
+    ) {}
+
     public function dispatchDueTargets(): int
     {
         if (XFlickrConfig::globalPause()) {
@@ -150,6 +150,9 @@ final class FlickrSpiderService
                 'status' => CrawlRunStatus::Completed,
                 'completed_at' => now(),
             ]);
+
+            $run->refresh();
+            event(new CrawlRunCompleted($run));
         }
     }
 
@@ -175,14 +178,7 @@ final class FlickrSpiderService
             return false;
         }
 
-        $job = match ($target->task_type) {
-            TaskType::ContactsPage => new FetchContactsPageJob($target->id),
-            TaskType::PeoplePhotos => new FetchPeoplePhotosJob($target->id),
-            TaskType::PhotosetsList => new FetchPhotosetsListJob($target->id),
-            TaskType::PhotosetsPhotos => new FetchPhotosetsPhotosJob($target->id),
-            TaskType::GalleriesList => new FetchGalleriesListJob($target->id),
-            TaskType::GalleriesPhotos => new FetchGalleriesPhotosJob($target->id),
-        };
+        $job = $this->jobFactory->make($target);
 
         dispatch($job)->onQueue((string) config('xflickr-crawler.queue', 'xflickr'));
 
