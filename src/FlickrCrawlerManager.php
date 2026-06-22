@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace JOOservices\XFlickrCrawler;
 
+use JOOservices\XFlickrCrawler\Services\ConnectionRegistryService;
 use JOOservices\XFlickrCrawler\Services\CrawlerCatalog;
 use JOOservices\XFlickrCrawler\Services\CrawlerRuns;
 use JOOservices\XFlickrCrawler\Services\CrawlingService;
@@ -16,6 +17,7 @@ final class FlickrCrawlerManager
         private readonly FlickrRequestLimiter $limiter,
         private readonly CrawlerCatalog $catalog,
         private readonly CrawlerRuns $runs,
+        private readonly ConnectionRegistryService $connections,
     ) {}
 
     public function connection(string $connectionKey, string $token, ?string $appProfile = null): FlickrConnection
@@ -39,5 +41,10 @@ final class FlickrCrawlerManager
     public function runs(): CrawlerRuns
     {
         return $this->runs;
+    }
+
+    public function connections(): ConnectionRegistryService
+    {
+        return $this->connections;
     }
 }

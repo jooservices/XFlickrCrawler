@@ -202,5 +202,9 @@ final class FlickrCatalogServiceTest extends TestCase
             'subject_nsid' => 'subject@N01',
             'photo_owner_nsid' => 'owner@N01',
         ]);
+        $this->assertDatabaseHas('xflickr_connection_contacts', [
+            'connection_key' => 'conn-fav',
+            'contact_nsid' => 'owner@N01',
+        ]);
     }
 }

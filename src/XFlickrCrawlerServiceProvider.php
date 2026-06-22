@@ -7,6 +7,7 @@ namespace JOOservices\XFlickrCrawler;
 use Illuminate\Support\ServiceProvider;
 use JOOservices\XFlickrCrawler\Console\DispatchCrawlTargetsCommand;
 use JOOservices\XFlickrCrawler\Jobs\CrawlTargetJobFactory;
+use JOOservices\XFlickrCrawler\Services\ConnectionRegistryService;
 use JOOservices\XFlickrCrawler\Services\CrawlerCatalog;
 use JOOservices\XFlickrCrawler\Services\CrawlerRuns;
 use JOOservices\XFlickrCrawler\Services\CrawlingService;
@@ -36,6 +37,7 @@ final class XFlickrCrawlerServiceProvider extends ServiceProvider
         $this->app->singleton(CrawlTargetJobFactory::class);
         $this->app->singleton(CrawlingService::class);
         $this->app->singleton(CrawlerCatalog::class);
+        $this->app->singleton(ConnectionRegistryService::class);
         $this->app->singleton(CrawlerRuns::class);
         $this->app->singleton(FlickrCatalogService::class);
         $this->app->singleton(FlickrFavoritesPersistence::class);

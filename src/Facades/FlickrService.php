@@ -11,6 +11,9 @@ use JOOservices\XFlickrCrawler\FlickrCrawlerManager;
 /**
  * @method static FlickrConnection connection(string $connectionKey, string $token, ?string $appProfile = null)
  * @method static array<string, mixed> limiterState(string $connectionKey)
+ * @method static \JOOservices\XFlickrCrawler\Services\CrawlerCatalog catalog()
+ * @method static \JOOservices\XFlickrCrawler\Services\CrawlerRuns runs()
+ * @method static \JOOservices\XFlickrCrawler\Services\ConnectionRegistryService connections()
  *
  * @see FlickrCrawlerManager
  */

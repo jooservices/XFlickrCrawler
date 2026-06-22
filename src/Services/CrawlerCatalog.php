@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace JOOservices\XFlickrCrawler\Services;
 
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use JOOservices\XFlickrCrawler\DTO\PhotoCountsDto;
 use JOOservices\XFlickrCrawler\Models\ConnectionContact;
 use JOOservices\XFlickrCrawler\Models\Contact;
@@ -56,5 +57,42 @@ final class CrawlerCatalog
             ->whereIn('nsid', $nsids)
             ->orderBy('username')
             ->get();
+    }
+
+    /**
+     * @return LengthAwarePaginator<int, Contact>
+     */
+    public function contactProfilesForConnectionPaginated(
+        string $connectionKey,
+        ?string $search,
+        int $page,
+        int $perPage,
+    ): LengthAwarePaginator {
+        $contactsTable = (new Contact)->getTable();
+        $connectionContactsTable = (new ConnectionContact)->getTable();
+
+        $query = Contact::query()
+            ->select("{$contactsTable}.*")
+            ->join(
+                $connectionContactsTable,
+                "{$connectionContactsTable}.contact_nsid",
+                '=',
+                "{$contactsTable}.nsid",
+            )
+            ->where("{$connectionContactsTable}.connection_key", $connectionKey);
+
+        if ($search !== null && $search !== '') {
+            $like = '%'.$search.'%';
+            $query->where(function ($builder) use ($contactsTable, $like): void {
+                $builder
+                    ->where("{$contactsTable}.username", 'like', $like)
+                    ->orWhere("{$contactsTable}.realname", 'like', $like)
+                    ->orWhere("{$contactsTable}.nsid", 'like', $like);
+            });
+        }
+
+        return $query
+            ->orderBy("{$contactsTable}.username")
+            ->paginate($perPage, ["{$contactsTable}.*"], 'page', $page);
     }
 }

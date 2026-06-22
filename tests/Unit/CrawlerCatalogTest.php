@@ -11,12 +11,14 @@ use JOOservices\XFlickrCrawler\Enums\CrawlType;
 use JOOservices\XFlickrCrawler\Enums\TaskType;
 use JOOservices\XFlickrCrawler\Events\CrawlRunCompleted;
 use JOOservices\XFlickrCrawler\Facades\FlickrService;
+use JOOservices\XFlickrCrawler\Models\ConnectionContact;
 use JOOservices\XFlickrCrawler\Models\CrawlRun;
 use JOOservices\XFlickrCrawler\Models\CrawlTarget;
 use JOOservices\XFlickrCrawler\Models\Favorite;
 use JOOservices\XFlickrCrawler\Models\Gallery;
 use JOOservices\XFlickrCrawler\Models\Photo;
 use JOOservices\XFlickrCrawler\Models\Photoset;
+use JOOservices\XFlickrCrawler\Services\ConnectionRegistryService;
 use JOOservices\XFlickrCrawler\Services\CrawlerCatalog;
 use JOOservices\XFlickrCrawler\Services\CrawlerRuns;
 use JOOservices\XFlickrCrawler\Services\FlickrCatalogService;
@@ -84,6 +86,33 @@ final class CrawlerCatalogTest extends TestCase
         $this->assertSame(['c1@N01', 'c2@N01'], $contacts->pluck('contact_nsid')->sort()->values()->all());
     }
 
+    public function test_contact_profiles_for_connection_paginated_supports_search(): void
+    {
+        app(FlickrCatalogService::class)->persistContacts([
+            ['nsid' => 'alice@N01', 'username' => 'alice', 'realname' => 'Alice'],
+            ['nsid' => 'bob@N01', 'username' => 'bob', 'realname' => 'Bob'],
+        ], 'conn-page');
+
+        ConnectionContact::query()->create([
+            'connection_key' => 'conn-page',
+            'contact_nsid' => 'fav-owner@N01',
+            'discovered_at' => now(),
+        ]);
+        app(FlickrCatalogService::class)->persistContacts([
+            ['nsid' => 'fav-owner@N01', 'username' => 'favowner', 'realname' => 'Favorite Owner'],
+        ]);
+
+        $paginator = app(CrawlerCatalog::class)->contactProfilesForConnectionPaginated(
+            connectionKey: 'conn-page',
+            search: 'fav',
+            page: 1,
+            perPage: 10,
+        );
+
+        $this->assertSame(1, $paginator->total());
+        $this->assertSame('fav-owner@N01', $paginator->items()[0]->nsid);
+    }
+
     public function test_active_runs_for_connection(): void
     {
         CrawlRun::query()->create([
@@ -113,6 +142,7 @@ final class CrawlerCatalogTest extends TestCase
 
         $this->assertInstanceOf(CrawlerCatalog::class, $manager->catalog());
         $this->assertInstanceOf(CrawlerRuns::class, $manager->runs());
+        $this->assertInstanceOf(ConnectionRegistryService::class, $manager->connections());
     }
 
     public function test_crawl_run_completed_event_fires_when_run_finishes(): void

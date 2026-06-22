@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace JOOservices\XFlickrCrawler\Services;
 
+use JOOservices\XFlickrCrawler\Repositories\ConnectionContactRepository;
 use JOOservices\XFlickrCrawler\Repositories\FavoriteRepository;
 use JOOservices\XFlickrCrawler\Repositories\PhotoRepository;
 
@@ -13,6 +14,7 @@ final class FlickrFavoritesPersistence
         private readonly FlickrCatalogService $catalog,
         private readonly PhotoRepository $photos,
         private readonly FavoriteRepository $favorites,
+        private readonly ConnectionContactRepository $connectionContacts,
     ) {}
 
     /**
@@ -54,6 +56,17 @@ final class FlickrFavoritesPersistence
             ];
         }
 
-        return $this->favorites->upsertMany($rows);
+        $count = $this->favorites->upsertMany($rows);
+
+        $ownerNsids = array_values(array_unique(array_filter(
+            array_column($rows, 'photo_owner_nsid'),
+            static fn (?string $nsid): bool => is_string($nsid) && $nsid !== '',
+        )));
+
+        if ($ownerNsids !== []) {
+            $this->connectionContacts->upsertMany($connectionKey, $ownerNsids);
+        }
+
+        return $count;
     }
 }
