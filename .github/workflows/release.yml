@@ -83,4 +83,4 @@ jobs:
         run: |
           curl -XPOST -H 'content-type:application/json' \
             "https://packagist.org/api/update-package?username=${PACKAGIST_USERNAME}" \
-            -d '{"repository":{"url":"https://github.com/jooservices/xflickr-crawler"},"api_token":"'"${PACKAGIST_TOKEN}"'"}'
+            -d '{"repository":{"url":"https://github.com/jooservices/XFlickrCrawler"},"api_token":"'"${PACKAGIST_TOKEN}"'"}'

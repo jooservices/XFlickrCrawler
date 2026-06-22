@@ -20,14 +20,14 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/jooservices/xflickr-crawler/issues",
-        "source": "https://github.com/jooservices/xflickr-crawler"
+        "issues": "https://github.com/jooservices/XFlickrCrawler/issues",
+        "source": "https://github.com/jooservices/XFlickrCrawler"
     },
     "require": {
         "php": "^8.5",
         "jooservices/dto": "^1.0",
-        "jooservices/flickr": "dev-develop",
-        "jooservices/laravel-config": "dev-develop",
+        "jooservices/flickr": "^1.0",
+        "jooservices/laravel-config": "^1.1",
         "laravel/framework": "^12.0"
     },
     "require-dev": {
@@ -62,16 +62,6 @@
             }
         }
     },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../flickr"
-        },
-        {
-            "type": "path",
-            "url": "../laravel-config"
-        }
-    ],
     "scripts": {
         "test": "vendor/bin/phpunit",
         "test:coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-clover coverage.xml",

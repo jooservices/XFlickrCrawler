@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f158fdba89214fe26129b4dc6efd2ca5",
+    "content-hash": "732d387d5237095eefe31ff57c67a635",
     "packages": [
         {
             "name": "brick/math",
@@ -1197,11 +1197,17 @@
         },
         {
             "name": "jooservices/flickr",
-            "version": "dev-develop",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jooservices/flickr.git",
+                "reference": "372f301dd94381df9c6ada5f288d462c592f7826"
+            },
             "dist": {
-                "type": "path",
-                "url": "../flickr",
-                "reference": "bae47aa0cdc8bcb5d6884ff132540e16fd4b10a4"
+                "type": "zip",
+                "url": "https://api.github.com/repos/jooservices/flickr/zipball/372f301dd94381df9c6ada5f288d462c592f7826",
+                "reference": "372f301dd94381df9c6ada5f288d462c592f7826",
+                "shasum": ""
             },
             "require": {
                 "jooservices/client": "^1.2",
@@ -1228,72 +1234,7 @@
                     "JOOservices\\Flickr\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "JOOservices\\Flickr\\Tests\\": "tests/"
-                }
-            },
-            "scripts": {
-                "test": [
-                    "phpunit"
-                ],
-                "test:coverage": [
-                    "phpunit --coverage-html coverage --coverage-clover coverage.xml"
-                ],
-                "lint:pint": [
-                    "pint --test"
-                ],
-                "lint:pint:fix": [
-                    "pint"
-                ],
-                "lint:cs": [
-                    "php-cs-fixer fix --config=.php-cs-fixer.dist.php --dry-run --diff --sequential"
-                ],
-                "lint:cs:fix": [
-                    "php-cs-fixer fix --config=.php-cs-fixer.dist.php --sequential"
-                ],
-                "lint:phpcs": [
-                    "phpcs --standard=phpcs.xml"
-                ],
-                "lint:phpstan": [
-                    "XDEBUG_MODE=off phpstan analyse --configuration=phpstan.neon --memory-limit=512M --debug"
-                ],
-                "lint:phpmd": [
-                    "php -d error_reporting=6143 vendor/bin/phpmd src text phpmd.xml"
-                ],
-                "security:audit": [
-                    "composer audit"
-                ],
-                "lint": [
-                    "@lint:pint",
-                    "@lint:phpcs",
-                    "@lint:phpstan"
-                ],
-                "lint:all": [
-                    "@lint",
-                    "@lint:phpmd",
-                    "@lint:cs",
-                    "@security:audit"
-                ],
-                "lint:fix": [
-                    "@lint:pint:fix",
-                    "@lint:cs:fix"
-                ],
-                "check": [
-                    "@lint:all",
-                    "@test"
-                ],
-                "ci": [
-                    "@lint:all",
-                    "@test:coverage"
-                ],
-                "post-install-cmd": [
-                    "captainhook install --force --skip-existing"
-                ],
-                "post-update-cmd": [
-                    "captainhook install --force --skip-existing"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1315,17 +1256,21 @@
                 "issues": "https://github.com/jooservices/flickr/issues",
                 "source": "https://github.com/jooservices/flickr"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "time": "2026-05-14T07:24:23+00:00"
         },
         {
             "name": "jooservices/laravel-config",
-            "version": "dev-develop",
-            "dist": {
-                "type": "path",
-                "url": "../laravel-config",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jooservices/laravel-config.git",
                 "reference": "2b142b8ec0d88cdd8d512dca11595fb543a2bba0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jooservices/laravel-config/zipball/2b142b8ec0d88cdd8d512dca11595fb543a2bba0",
+                "reference": "2b142b8ec0d88cdd8d512dca11595fb543a2bba0",
+                "shasum": ""
             },
             "require": {
                 "illuminate/cache": "^11.0|^12.0",
@@ -1356,54 +1301,7 @@
                     "JOOservices\\LaravelConfig\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "JOOservices\\LaravelConfig\\Tests\\": "tests/"
-                }
-            },
-            "scripts": {
-                "test": [
-                    "vendor/bin/phpunit"
-                ],
-                "test:coverage": [
-                    "vendor/bin/phpunit --coverage-text"
-                ],
-                "lint:pint": [
-                    "vendor/bin/pint --test"
-                ],
-                "lint:pint:fix": [
-                    "vendor/bin/pint"
-                ],
-                "lint:phpstan": [
-                    "XDEBUG_MODE=off vendor/bin/phpstan analyse --memory-limit=256M"
-                ],
-                "lint:phpmd": [
-                    "php -d error_reporting=6143 vendor/bin/phpmd src text phpmd.xml"
-                ],
-                "lint:phpcs": [
-                    "vendor/bin/phpcs src tests --standard=phpcs.xml"
-                ],
-                "lint": [
-                    "@lint:pint",
-                    "@lint:phpcs",
-                    "@lint:phpstan"
-                ],
-                "lint:all": [
-                    "@lint",
-                    "@lint:phpmd"
-                ],
-                "lint:fix": [
-                    "@lint:pint:fix"
-                ],
-                "check": [
-                    "@lint:all",
-                    "@test"
-                ],
-                "ci": [
-                    "@lint:all",
-                    "@test:coverage"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1424,9 +1322,7 @@
                 "issues": "https://github.com/jooservices/laravel-config/issues",
                 "source": "https://github.com/jooservices/laravel-config"
             },
-            "transport-options": {
-                "relative": true
-            }
+            "time": "2026-05-11T23:47:03+00:00"
         },
         {
             "name": "laravel/framework",
@@ -10787,10 +10683,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "jooservices/flickr": 20,
-        "jooservices/laravel-config": 20
-    },
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

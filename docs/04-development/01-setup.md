@@ -12,7 +12,7 @@
 ## Clone and install
 
 ```bash
-git clone https://github.com/jooservices/xflickr-crawler.git
+git clone https://github.com/jooservices/XFlickrCrawler.git
 cd xflickr-crawler
 composer install
 ```

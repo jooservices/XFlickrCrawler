@@ -31,4 +31,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MySQL, Redis
 - `jooservices/flickr`, `jooservices/laravel-config`, `jooservices/dto`
 
-[1.0.0]: https://github.com/jooservices/xflickr-crawler/releases/tag/v1.0.0
+[1.0.0]: https://github.com/jooservices/XFlickrCrawler/releases/tag/v1.0.0
