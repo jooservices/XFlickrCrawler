@@ -1,0 +1,19 @@
+---
+description: Baseline repository quality rules for XFlickr Crawler.
+globs:
+alwaysApply: true
+---
+
+# XFlickr Crawler — repository quality foundation
+
+Read `AGENTS.md` before non-trivial work.
+
+- Package: `jooservices/xflickr-crawler`
+- Quality gate: `composer check` (local), `composer ci` (coverage)
+- Pint wins formatting conflicts; PHPCS is structural only
+- Crawl entry: `FlickrService::connection()` only
+- No OAuth in package; app credentials in laravel-config `xflickr_app.{profile}`
+- One queued job per Flickr API page
+- Git flow: dto standard (`develop` integration, `release/<version>` → `master`)
+- Stop and ask when requirements conflict with source truth
+- Canonical skills: `.github/skills/`

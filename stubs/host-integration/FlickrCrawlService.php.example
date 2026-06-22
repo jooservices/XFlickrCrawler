@@ -1,0 +1,66 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Services;
+
+use JOOservices\XFlickrCrawler\Facades\FlickrService;
+use JOOservices\XFlickrCrawler\Models\CrawlRun;
+
+/**
+ * Example host-app wrapper — copy and adapt.
+ *
+ * connection_key: one stable key per OAuth-linked account (rate-limit scope).
+ * subject_nsid: whose Flickr data to crawl (does not affect rate limits).
+ */
+final class FlickrCrawlService
+{
+    public function startContacts(int $userId, string $tokenJson, string $appProfile = 'main'): CrawlRun
+    {
+        return FlickrService::connection(
+            connectionKey: $this->connectionKey($userId),
+            token: $tokenJson,
+            appProfile: $appProfile,
+        )->contacts();
+    }
+
+    public function startPhotos(int $userId, string $tokenJson, string $subjectNsid, string $appProfile = 'main'): CrawlRun
+    {
+        return FlickrService::connection(
+            connectionKey: $this->connectionKey($userId),
+            token: $tokenJson,
+            appProfile: $appProfile,
+        )->photos($subjectNsid);
+    }
+
+    public function startPhotosets(int $userId, string $tokenJson, string $subjectNsid, string $appProfile = 'main'): CrawlRun
+    {
+        return FlickrService::connection(
+            connectionKey: $this->connectionKey($userId),
+            token: $tokenJson,
+            appProfile: $appProfile,
+        )->photosets($subjectNsid);
+    }
+
+    public function startGalleries(int $userId, string $tokenJson, string $subjectNsid, string $appProfile = 'main'): CrawlRun
+    {
+        return FlickrService::connection(
+            connectionKey: $this->connectionKey($userId),
+            token: $tokenJson,
+            appProfile: $appProfile,
+        )->galleries($subjectNsid);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function limiterState(int $userId): array
+    {
+        return FlickrService::limiterState($this->connectionKey($userId));
+    }
+
+    private function connectionKey(int $userId): string
+    {
+        return 'user-'.$userId;
+    }
+}

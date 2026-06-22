@@ -1,0 +1,30 @@
+# Gitleaks Configuration for XFlickr Crawler
+
+title = "XFlickr Crawler Gitleaks Configuration"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Allowlisted files and patterns"
+
+paths = [
+  '''^vendor/''',
+  '''composer\.lock$''',
+  '''^\.gitleaks\.toml$''',
+  '''^tests/''',
+]
+
+regexes = [
+  '''example[_-]?key''',
+  '''fake[_-]?secret''',
+  '''test-api-key''',
+  '''test-api-secret''',
+  '''YOUR[_-]?API[_-]?KEY''',
+  '''REPLACE[_-]?ME''',
+]
+
+stopwords = [
+  '''example''',
+  '''placeholder''',
+]
