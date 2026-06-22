@@ -38,6 +38,30 @@ final class FlickrSpiderServiceTest extends TestCase
         $this->assertSame(CrawlRunStatus::Completed, $run->fresh()->status);
     }
 
+    public function test_maybe_complete_run_when_all_targets_failed(): void
+    {
+        $spider = app(FlickrSpiderService::class);
+
+        $run = CrawlRun::query()->create([
+            'connection_key' => 'spider-failed',
+            'crawl_type' => CrawlType::Photosets->value,
+            'status' => CrawlRunStatus::Running,
+            'started_at' => now(),
+        ]);
+
+        CrawlTarget::query()->create([
+            'xflickr_crawl_run_id' => $run->id,
+            'task_type' => TaskType::PhotosetsList,
+            'subject_nsid' => '999@N01',
+            'page' => 1,
+            'status' => CrawlStatus::Failed,
+        ]);
+
+        $spider->maybeCompleteRun($run->fresh());
+
+        $this->assertSame(CrawlRunStatus::Completed, $run->fresh()->status);
+    }
+
     public function test_audit_service_logs_and_increments(): void
     {
         $audit = app(FlickrApiAuditService::class);

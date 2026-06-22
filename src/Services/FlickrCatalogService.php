@@ -321,6 +321,18 @@ final class FlickrCatalogService
             return null;
         }
 
+        if (is_array($value)) {
+            if (array_key_exists('_content', $value)) {
+                $value = $value['_content'];
+            } else {
+                return null;
+            }
+        }
+
+        if (! is_scalar($value)) {
+            return null;
+        }
+
         $string = trim((string) $value);
 
         return $string === '' ? null : $string;

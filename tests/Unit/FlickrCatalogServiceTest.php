@@ -75,6 +75,25 @@ final class FlickrCatalogServiceTest extends TestCase
         $this->assertDatabaseHas('xflickr_galleries', ['flickr_gallery_id' => 'gal-1']);
     }
 
+    public function test_persist_photosets_unwraps_flickr_content_fields(): void
+    {
+        $count = $this->catalog->persistPhotosets([
+            [
+                'id' => 'ps-flickr',
+                'title' => ['_content' => 'TÚ UYÊN'],
+                'description' => ['_content' => ''],
+                'photos' => 25,
+            ],
+        ], '333@N01');
+
+        $this->assertSame(1, $count);
+        $this->assertDatabaseHas('xflickr_photosets', [
+            'flickr_photoset_id' => 'ps-flickr',
+            'title' => 'TÚ UYÊN',
+            'description' => null,
+        ]);
+    }
+
     public function test_persist_photoset_photo_page_attaches_pivot(): void
     {
         Photoset::query()->create([

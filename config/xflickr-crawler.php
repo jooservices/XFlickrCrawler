@@ -31,8 +31,8 @@ return [
 
     'crawl' => [
         'per_page' => (int) env('XFLICKR_CRAWL_PER_PAGE', 500),
-        'dispatch_limit' => (int) env('XFLICKR_DISPATCH_LIMIT', 1),
-        'people_photos_safe_search' => (int) env('XFLICKR_PEOPLE_PHOTOS_SAFE_SEARCH', 3),
+        'dispatch_limit' => (int) env('XFLICKR_DISPATCH_LIMIT', 0),
+        'people_photos_safe_search' => (int) env('XFLICKR_PEOPLE_PHOTOS_SAFE_SEARCH', 1),
         'stall_minutes' => (int) env('XFLICKR_STALL_MINUTES', 15),
     ],
 

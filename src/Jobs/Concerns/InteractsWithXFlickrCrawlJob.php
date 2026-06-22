@@ -147,6 +147,12 @@ trait InteractsWithXFlickrCrawlJob
             'last_crawled_at' => now(),
         ]);
 
-        event(new CrawlPageFailed($target->fresh(['crawlRun']) ?? $target, $reason));
+        $target = $target->fresh(['crawlRun']) ?? $target;
+
+        event(new CrawlPageFailed($target, $reason));
+
+        if ($target->crawlRun !== null) {
+            app(FlickrSpiderService::class)->maybeCompleteRun($target->crawlRun);
+        }
     }
 }

@@ -15,7 +15,7 @@ final class PeoplePhotosParams
             'user_id' => $userId,
             'page' => $page,
             'per_page' => $perPage,
-            'safe_search' => XFlickrConfig::crawlInt('people_photos_safe_search', 3),
+            'safe_search' => XFlickrConfig::crawlInt('people_photos_safe_search', 1),
             'extras' => 'owner_name,path_alias,url_sq,url_t,url_s,url_m,url_o',
         ];
     }

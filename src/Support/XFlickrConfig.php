@@ -46,8 +46,8 @@ final class XFlickrConfig
 
     public static function crawl(string $key, mixed $default = null): mixed
     {
-        $runtimeKey = "xflickr.crawl.{$key}";
-        if (self::runtimeAvailable() && RuntimeConfig::has($runtimeKey)) {
+        $runtimeKey = "xflickr_crawl.{$key}";
+        if (self::runtimeAvailable() && self::runtimeHas($runtimeKey)) {
             return RuntimeConfig::get($runtimeKey);
         }
 
@@ -79,9 +79,11 @@ final class XFlickrConfig
     {
         $runtime = self::int('xflickr.dispatch_limit', 0);
 
+        $configured = self::crawlInt('dispatch_limit', 0);
+
         return $runtime > 0
             ? $runtime
-            : self::crawlInt('dispatch_limit', 1);
+            : $configured;
     }
 
     public static function table(string $key): string
@@ -142,5 +144,14 @@ final class XFlickrConfig
     private static function runtimeAvailable(): bool
     {
         return App::getFacadeApplication()?->bound('config-store') === true;
+    }
+
+    private static function runtimeHas(string $path): bool
+    {
+        if (substr_count($path, '.') !== 1) {
+            return false;
+        }
+
+        return RuntimeConfig::has($path);
     }
 }

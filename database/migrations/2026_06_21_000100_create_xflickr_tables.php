@@ -69,7 +69,7 @@ return new class extends Migration
             $table->foreignId('xflickr_photoset_id')->constrained(config('xflickr-crawler.tables.photosets', 'xflickr_photosets'))->cascadeOnDelete();
             $table->foreignId('xflickr_photo_id')->constrained(config('xflickr-crawler.tables.photos', 'xflickr_photos'))->cascadeOnDelete();
             $table->timestamp('discovered_at')->useCurrent();
-            $table->unique(['xflickr_photoset_id', 'xflickr_photo_id']);
+            $table->unique(['xflickr_photoset_id', 'xflickr_photo_id'], 'xf_photoset_photo_unique');
         });
 
         Schema::create(config('xflickr-crawler.tables.gallery_photo', 'xflickr_gallery_photo'), function (Blueprint $table): void {
@@ -77,7 +77,7 @@ return new class extends Migration
             $table->foreignId('xflickr_gallery_id')->constrained(config('xflickr-crawler.tables.galleries', 'xflickr_galleries'))->cascadeOnDelete();
             $table->foreignId('xflickr_photo_id')->constrained(config('xflickr-crawler.tables.photos', 'xflickr_photos'))->cascadeOnDelete();
             $table->timestamp('discovered_at')->useCurrent();
-            $table->unique(['xflickr_gallery_id', 'xflickr_photo_id']);
+            $table->unique(['xflickr_gallery_id', 'xflickr_photo_id'], 'xf_gallery_photo_unique');
         });
 
         Schema::create(config('xflickr-crawler.tables.crawl_runs', 'xflickr_crawl_runs'), function (Blueprint $table): void {

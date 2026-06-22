@@ -38,8 +38,7 @@ final class FlickrSpiderService
         $limit = XFlickrConfig::dispatchLimit();
         $now = CarbonImmutable::now();
 
-        /** @var Collection<int, CrawlTarget> $targets */
-        $targets = CrawlTarget::query()
+        $query = CrawlTarget::query()
             ->whereIn('status', [CrawlStatus::Pending, CrawlStatus::Queued])
             ->where(function ($query) use ($now): void {
                 $query->whereNull('next_run_at')->orWhere('next_run_at', '<=', $now);
@@ -48,9 +47,14 @@ final class FlickrSpiderService
                 $query->whereNull('locked_until')->orWhere('locked_until', '<=', $now);
             })
             ->orderByDesc('priority')
-            ->orderBy('id')
-            ->limit($limit)
-            ->get();
+            ->orderBy('id');
+
+        if ($limit > 0) {
+            $query->limit($limit);
+        }
+
+        /** @var Collection<int, CrawlTarget> $targets */
+        $targets = $query->get();
 
         $dispatched = 0;
         foreach ($targets as $target) {

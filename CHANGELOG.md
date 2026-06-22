@@ -5,6 +5,21 @@ All notable changes to this package will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-06-22
+
+### Fixed
+
+- **Flickr `_content` fields** — `FlickrCatalogService::stringValue()` unwraps `{_content: "..."}` objects so photoset/gallery title and description persist without `Array to string conversion` errors
+- **Stuck crawl runs** — `failTarget()` now calls `maybeCompleteRun()` so runs finish when all targets are failed/skipped/completed
+
+### Changed
+
+- **Default dispatch throughput** — `dispatch_limit` defaults to `0` (unlimited targets per `xflickr:dispatch` tick); set `XFLICKR_DISPATCH_LIMIT` to cap if needed
+- **Default photo safe search** — `people_photos_safe_search` defaults to `1` (Flickr safe / least restrictive) instead of `3` (restricted)
+- **Runtime crawl config keys** — `XFlickrConfig::crawl()` reads `xflickr_crawl.{key}` from laravel-config (was incorrectly `xflickr.crawl.{key}`)
+
+[1.1.1]: https://github.com/jooservices/XFlickrCrawler/releases/tag/v1.1.1
+
 ## [1.1.0] - 2026-06-22
 
 ### Added
